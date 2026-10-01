@@ -1,0 +1,29 @@
+:root {
+  --colour-canvas: #f5f6f8;
+  --colour-surface: #ffffff;
+  --colour-surface-raised: #f3f4f7;
+  --colour-line: #e4e7ed;
+  --colour-ink: #111827;
+  --colour-muted: #6b7280;
+  --colour-accent: #2f6bff;
+  --colour-accent-soft: #e3ecff;
+  --colour-accent-ink: #1a47c4;
+  --colour-good: #12805c;
+  --colour-good-soft: #ddf3ea;
+  --colour-warning: #a8670b;
+  --colour-warning-soft: #fbebcf;
+  --colour-bad: #bc3348;
+  --colour-bad-soft: #fadfe4;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --radius-panel: 22px;
+  --radius-control: 14px;
+  --radius-pill: 999px;
+}
+
+body {
+  margin: 0;
+  background: var(--colour-canvas);
+  color: var(--colour-ink);
+  font-family: var(--font-body);
+}
