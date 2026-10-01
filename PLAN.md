@@ -9,7 +9,7 @@ Two fictional customers. Every call goes to one verified demo number.
 - Vapi for calls, with ElevenLabs Flash v2.5 as the voice
 - Twilio number imported into Vapi for outbound calls
 - Razorpay Payment Links in test mode
-- A small database for call results
+- Supabase for customers and call results
 
 ## Flow
 
@@ -39,4 +39,3 @@ Two fictional customers. Every call goes to one verified demo number.
 
 - Phone number country and the Twilio setup
 - Whether the agent offers a pause or discount to someone who wants to cancel
-- Which database to use on Vercel
