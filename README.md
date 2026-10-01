@@ -120,7 +120,7 @@ The AI writes the words, but it does not control the money. These checks run in 
 - The amount always comes from the customer record, never from what the AI says.
 - A payment link is sent only after the customer has agreed to pay.
 - Customers who have already paid or asked to stop are skipped.
-- Calls go only to the one verified demo number.
+- Calls go only to the phone number saved on the customer record, which is the owner's own.
 
 All customers in this project are fictional, and every call goes to a number the owner controls.
 
@@ -196,7 +196,7 @@ The prompt files in `src/prompts`:
 - A Vapi account and its private API key
 - A phone number imported into Vapi for outbound calls (Twilio, Vonage or Telnyx). Vapi's free numbers cannot place calls.
 - A Razorpay account with test keys (Dashboard, Settings, API Keys, Generate Test Key)
-- Your own mobile number. Use only a number you control or have explicit permission to call.
+- Your own mobile number, saved on the customer records. Use only a number you control or have explicit permission to call.
 
 ### Steps
 
@@ -232,7 +232,6 @@ The prompt files in `src/prompts`:
    |---|---|
    | VAPI_API_KEY | Vapi dashboard, API keys, the private key |
    | VAPI_PHONE_NUMBER_ID | Vapi dashboard, Phone Numbers, the ID of the number you imported |
-   | DEMO_PHONE_NUMBER | Your own mobile in international form, for example +91XXXXXXXXXX |
    | RAZORPAY_KEY_ID | Razorpay test key ID, starts with `rzp_test_` |
    | RAZORPAY_KEY_SECRET | Razorpay test key secret |
    | VAPI_WEBHOOK_SECRET | Any long random text you choose. Our app checks it on every message from Vapi. |
