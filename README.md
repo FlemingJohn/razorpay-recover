@@ -149,7 +149,7 @@ After the call, the app saves a short record. The format is in [`src/schemas/cal
 | ElevenLabs | The agent's voice, through Vapi |
 | A phone number from Twilio, Vonage or Telnyx | The number the agent calls from, imported into Vapi |
 | Razorpay Payment Links, test mode | Secure payment links with no real money moving |
-| A small database | Saving call results |
+| Supabase (Postgres) | Saving customers and call results |
 
 There is no workflow framework such as LangGraph. Vapi runs the conversation and the script is short and fixed, so a clear prompt and two tools cover it.
 
@@ -211,7 +211,11 @@ The prompt files in `src/prompts`:
    npm install
    ```
 
-3. **Create your settings file**
+3. **Create the database tables**
+
+   In the Supabase dashboard open the SQL editor and run the file `supabase/migrations/20261002000000_create_tables.sql`. It creates the `customers` and `calls` tables and adds the two fictional customers.
+
+4. **Create your settings file**
 
    On Windows:
    ```
@@ -222,7 +226,7 @@ The prompt files in `src/prompts`:
    cp .env.example .env
    ```
 
-4. **Fill in `.env`**
+5. **Fill in `.env`**
 
    | Setting | Where to find it |
    |---|---|
@@ -231,18 +235,20 @@ The prompt files in `src/prompts`:
    | DEMO_PHONE_NUMBER | Your own mobile in international form, for example +91XXXXXXXXXX |
    | RAZORPAY_KEY_ID | Razorpay test key ID, starts with `rzp_test_` |
    | RAZORPAY_KEY_SECRET | Razorpay test key secret |
-   | DATABASE_URL | Your database address (not needed until results are saved) |
-   | PUBLIC_BASE_URL | The public address Vapi can reach (see step 6) |
+   | VAPI_WEBHOOK_SECRET | Any long random text you choose. Our app checks it on every message from Vapi. |
+   | SUPABASE_URL | Supabase project settings, API, the project URL |
+   | SUPABASE_SECRET_KEY | Supabase project settings, API keys, the secret key (starts with `sb_secret_`). Server only, never share it. |
+   | PUBLIC_BASE_URL | The public address Vapi can reach (see step 7) |
 
    Never commit `.env`. It is already in `.gitignore`.
 
-5. **Start the app**
+6. **Start the app**
    ```
    npm run dev
    ```
    Open http://localhost:3000.
 
-6. **Let Vapi reach your computer (needed for live calls)**
+7. **Let Vapi reach your computer (needed for live calls)**
 
    Vapi sends messages back to your app during a call, so it needs a public address. Start a tunnel tool such as ngrok in a second terminal:
    ```
@@ -250,13 +256,13 @@ The prompt files in `src/prompts`:
    ```
    Copy the address it prints into `PUBLIC_BASE_URL` and restart the app.
 
-7. **Try a call**
+8. **Try a call**
 
    Click Call now for a customer. Your phone rings. Answer it and play the customer. Say you will pay, and a Razorpay test payment link is created. Then try the other paths: ask for more time, say you want to cancel, or ask it to stop calling.
 
 ### What works today
 
-The prompts, the result format and the customer records are done. Steps 5 to 7 need the dashboard, the call trigger and the payment link step, which are the next parts to build. Until then you can read and edit the prompts, and the prompt rules are described in [PROMPTS.md](PROMPTS.md).
+The dashboard (Overview, Customers, Calls, Payment links), the call trigger, the webhook that handles both tools, Razorpay payment links and result saving are built. The code type-checks and builds. I have not yet placed a live call, because that needs your Vapi number and keys, so treat the first call as the real test.
 
 ### Changing the agent
 
