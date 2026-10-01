@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "properties": {
+    "outcome": {
+      "type": "string",
+      "enum": ["paid_now", "promise_to_pay", "dispute", "wants_to_cancel", "opt_out", "no_answer"]
+    },
+    "willContinueSubscription": {
+      "type": "string",
+      "enum": ["yes", "no", "undecided"]
+    },
+    "cancelReason": {
+      "type": "string",
+      "enum": ["too_expensive", "not_using", "switched_provider", "billing_error", "other", "none"]
+    },
+    "confirmedFailureReason": { "type": "string" },
+    "paymentMethodChange": { "type": "boolean" },
+    "promiseDate": { "type": "string", "format": "date" },
+    "needsHumanFollowup": { "type": "boolean" },
+    "sentiment": {
+      "type": "string",
+      "enum": ["positive", "neutral", "annoyed"]
+    }
+  },
+  "required": ["outcome", "willContinueSubscription", "needsHumanFollowup"]
+}
