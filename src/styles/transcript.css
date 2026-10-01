@@ -1,0 +1,28 @@
+.transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  max-width: 85%;
+  padding: 8px 12px;
+  margin: 0;
+  border-radius: var(--radius-control);
+}
+
+.message-agent {
+  align-self: flex-start;
+  color: var(--colour-accent-ink);
+  background: var(--colour-accent-soft);
+}
+
+.message-customer {
+  align-self: flex-end;
+  background: var(--colour-surface-raised);
+}
+
+.link {
+  color: var(--colour-accent-ink);
+  word-break: break-all;
+}
