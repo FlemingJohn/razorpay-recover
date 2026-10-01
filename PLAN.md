@@ -1,7 +1,7 @@
 # Razorpay Recover
 
 A voice agent that phones customers whose autopay failed and gets them to pay.
-Two fictional customers. Every call goes to one verified demo number.
+Two customer records, both the owner. Every call goes to the phone number saved on the record.
 
 ## Stack
 
@@ -14,7 +14,7 @@ Two fictional customers. Every call goes to one verified demo number.
 ## Flow
 
 1. The dashboard starts a call for a customer.
-2. Vapi rings the demo number and the agent follows the prompt files.
+2. Vapi rings the customer's saved number and the agent follows the prompt files.
 3. The agent uses `send_payment_link` or `log_outcome` through the webhook.
 4. After the call Vapi sends the end of call report with the structured result.
 5. The dashboard shows the outcome, the cancel reason and whether they will continue.
@@ -33,7 +33,7 @@ Two fictional customers. Every call goes to one verified demo number.
 - The amount comes from the customer record, never from the model.
 - The payment link is sent only after the customer agrees.
 - Customers who have paid or opted out are skipped.
-- Calls go only to the verified demo number.
+- Calls go only to the number saved on the customer record, which is the owner's own.
 
 ## Open items
 
