@@ -1,0 +1,15 @@
+export type IconName =
+  | "overview"
+  | "customers"
+  | "calls"
+  | "links"
+  | "collapse"
+  | "phone"
+  | "check"
+  | "clock"
+  | "flag"
+  | "ban"
+  | "alert"
+  | "rupee"
+  | "percent"
+  | "wave";
