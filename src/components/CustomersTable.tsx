@@ -13,6 +13,8 @@ export function CustomersTable(props: {
           <tr>
             <th>ID</th>
             <th>Customer</th>
+            <th>Email</th>
+            <th>Phone</th>
             <th>Plan</th>
             <th className="number">Amount</th>
             <th>Reason</th>
