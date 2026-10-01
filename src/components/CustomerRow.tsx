@@ -14,6 +14,8 @@ export function CustomerRow(props: {
     <tr>
       <td className="mono">{customer.id}</td>
       <td>{customer.name}</td>
+      <td>{customer.email}</td>
+      <td className="mono">{customer.phone}</td>
       <td>{customer.plan}</td>
       <td className="number">{formatRupees(customer.amountInRupees)}</td>
       <td>{customer.failureReason}</td>
