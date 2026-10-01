@@ -8,6 +8,7 @@
   --colour-accent: #2f6bff;
   --colour-accent-soft: #e3ecff;
   --colour-accent-ink: #1a47c4;
+  --colour-on-accent: #ffffff;
   --colour-good: #12805c;
   --colour-good-soft: #ddf3ea;
   --colour-warning: #a8670b;
@@ -21,9 +22,20 @@
   --radius-pill: 999px;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   background: var(--colour-canvas);
   color: var(--colour-ink);
   font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.45;
 }
