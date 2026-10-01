@@ -1,0 +1,68 @@
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.top-bar {
+  padding: 12px 20px;
+  background: var(--colour-surface);
+  border: 1px solid var(--colour-line);
+  border-radius: var(--radius-panel);
+}
+
+.top-bar-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  overflow: auto;
+}
+
+.icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-button {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--colour-ink);
+  cursor: pointer;
+  background: var(--colour-surface-raised);
+  border: 0;
+  border-radius: 12px;
+}
+
+@media (max-width: 760px) {
+  .app {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .sidebar {
+    width: 76px;
+  }
+
+  .sidebar-label {
+    display: none;
+  }
+}
