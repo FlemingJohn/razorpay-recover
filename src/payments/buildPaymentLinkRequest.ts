@@ -1,4 +1,3 @@
-import { getRequiredEnvironmentValue } from "@/lib/getRequiredEnvironmentValue";
 import type { Customer } from "@/types/Customer";
 
 export function buildPaymentLinkRequest(customer: Customer) {
@@ -9,9 +8,10 @@ export function buildPaymentLinkRequest(customer: Customer) {
     reference_id: `${customer.id}-${Date.now()}`,
     customer: {
       name: customer.name,
-      contact: getRequiredEnvironmentValue("DEMO_PHONE_NUMBER"),
+      email: customer.email,
+      contact: customer.phone,
     },
-    notify: { sms: true, email: false },
+    notify: { sms: true, email: true },
     reminder_enable: false,
   };
 }
