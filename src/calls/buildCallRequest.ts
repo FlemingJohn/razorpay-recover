@@ -6,7 +6,7 @@ export function buildCallRequest(customer: Customer) {
   return {
     phoneNumberId: getRequiredEnvironmentValue("VAPI_PHONE_NUMBER_ID"),
     customer: {
-      number: getRequiredEnvironmentValue("DEMO_PHONE_NUMBER"),
+      number: customer.phone,
       name: customer.name,
     },
     assistant: buildAssistant(customer),
