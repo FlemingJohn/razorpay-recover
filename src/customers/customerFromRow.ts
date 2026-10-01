@@ -5,6 +5,8 @@ export function customerFromRow(row: Record<string, unknown>): Customer {
   return {
     id: row.id as string,
     name: row.name as string,
+    email: row.email as string,
+    phone: row.phone as string,
     merchant: row.merchant as string,
     plan: row.plan as string,
     amountInRupees: row.amount_in_rupees as number,
