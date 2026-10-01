@@ -4,5 +4,6 @@ export const promptSections = [
   { title: "Guardrails", fileName: "guardrails.md" },
   { title: "Context", fileName: "context.md" },
   { title: "Workflow", fileName: "workflow.md" },
+  { title: "Error handling", fileName: "errorHandling.md" },
   { title: "Examples", fileName: "examples.md" },
 ];
