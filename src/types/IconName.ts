@@ -13,4 +13,10 @@ export type IconName =
   | "rupee"
   | "percent"
   | "wave"
-  | "flask";
+  | "flask"
+  | "download"
+  | "user"
+  | "chat"
+  | "mic"
+  | "globe"
+  | "close";
