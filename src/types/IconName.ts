@@ -19,4 +19,5 @@ export type IconName =
   | "chat"
   | "mic"
   | "globe"
-  | "close";
+  | "close"
+  | "settings";
