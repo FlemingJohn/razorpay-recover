@@ -122,4 +122,4 @@ This type-checks the code and should print nothing. Then:
 ## Where to go next
 - [TWILIO.md](TWILIO.md) sets up phone calls.
 - [PLAN.md](PLAN.md) holds the plan and the open items.
-- [../PROMPTS.md](../PROMPTS.md) explains how the agent's prompt is built and changed.
+- [PROMPTS.md](PROMPTS.md) explains how the agent's prompt is built and changed.
