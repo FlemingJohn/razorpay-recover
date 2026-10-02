@@ -5,6 +5,7 @@ import { getBrowserCallPill } from "@/lib/getBrowserCallPill";
 import type { Customer } from "@/types/Customer";
 import { Drawer } from "./Drawer";
 import { Icon } from "./Icon";
+import { LiveCallView } from "./LiveCallView";
 import { SpokenTranscript } from "./SpokenTranscript";
 import { StatusPill } from "./StatusPill";
 import { TestCasesHint } from "./TestCasesHint";
@@ -14,8 +15,8 @@ export function BrowserCallDrawer(props: {
   onClose: () => void;
   onChanged: () => void;
 }) {
-  const { state, lines, errorMessage, start, stop } = useBrowserCall(props.customer.id, props.onChanged);
-  const isBusy = state === "connecting" || state === "live";
+  const call = useBrowserCall(props.customer.id, props.onChanged);
+  const isBusy = call.state === "connecting" || call.state === "live";
   return (
     <Drawer title={`Talk as ${props.customer.name}`} canClose={!isBusy} onClose={props.onClose}>
       <p className="state-message">
@@ -23,21 +24,25 @@ export function BrowserCallDrawer(props: {
         {props.customer.plan} payment. Answer as that customer.
       </p>
       <div className="call-heading">
-        <StatusPill {...getBrowserCallPill(state)} />
+        <StatusPill {...getBrowserCallPill(call.state)} />
         {isBusy ? (
-          <button type="button" className="button button-danger" onClick={stop}>
+          <button type="button" className="button button-danger" onClick={call.stop}>
             <Icon name="ban" />
             End call
           </button>
         ) : (
-          <button type="button" className="button" onClick={start}>
+          <button type="button" className="button" onClick={call.start}>
             <Icon name="wave" />
             Start talking
           </button>
         )}
       </div>
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
-      <SpokenTranscript lines={lines} />
+      {call.errorMessage && <p className="error-message">{call.errorMessage}</p>}
+      {isBusy ? (
+        <LiveCallView state={call.state} speaker={call.speaker} volume={call.volume} lines={call.lines} />
+      ) : (
+        <SpokenTranscript lines={call.lines} />
+      )}
       <TestCasesHint />
     </Drawer>
   );
