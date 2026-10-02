@@ -7,6 +7,7 @@ import "@/styles/charts.css";
 import "@/styles/tables.css";
 import "@/styles/transcript.css";
 import "@/styles/controls.css";
+import "@/styles/forms.css";
 
 export const metadata = { title: "Razorpay Recover" };
 
