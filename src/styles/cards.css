@@ -16,7 +16,7 @@
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 14px;
 }
 
@@ -43,6 +43,18 @@
   font-size: 28px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+
+.usage-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .two-columns {
