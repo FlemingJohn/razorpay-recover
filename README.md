@@ -194,7 +194,7 @@ The prompt files in `src/prompts`:
 
 - Node.js 20 or newer
 - A Vapi account and its private API key
-- A phone number imported into Vapi for outbound calls (Twilio, Vonage or Telnyx). Vapi's free numbers cannot place calls.
+- A phone number imported into Vapi for outbound calls (Twilio, Vonage or Telnyx). Vapi's free numbers cannot place calls. See [docs/TWILIO.md](docs/TWILIO.md) for the full Twilio setup.
 - A Razorpay account with test keys (Dashboard, Settings, API Keys, Generate Test Key)
 - Your own mobile number, saved on the customer records. Use only a number you control or have explicit permission to call.
 
