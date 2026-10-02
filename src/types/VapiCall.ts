@@ -5,6 +5,17 @@ export interface VapiCall {
   phoneCallProviderId: string | null;
   startedAt: string | null;
   endedAt: string | null;
+  cost?: number;
+  costBreakdown?: {
+    transport?: number;
+    stt?: number;
+    llm?: number;
+    tts?: number;
+    vapi?: number;
+    llmPromptTokens?: number;
+    llmCompletionTokens?: number;
+    llmCachedPromptTokens?: number;
+  };
   artifact?: {
     presignedMonoUrl?: string;
     presignedStereoUrl?: string;
