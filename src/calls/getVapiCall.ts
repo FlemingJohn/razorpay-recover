@@ -1,11 +1,8 @@
 import { getRequiredEnvironmentValue } from "@/lib/getRequiredEnvironmentValue";
 import { RequestError } from "@/lib/RequestError";
+import type { VapiCall } from "@/types/VapiCall";
 
-export async function getVapiCall(vapiCallId: string): Promise<{
-  status: string;
-  endedReason: string | null;
-  phoneCallProviderId: string | null;
-}> {
+export async function getVapiCall(vapiCallId: string): Promise<VapiCall> {
   const response = await fetch(`https://api.vapi.ai/call/${vapiCallId}`, {
     headers: { Authorization: `Bearer ${getRequiredEnvironmentValue("VAPI_API_KEY")}` },
     cache: "no-store",
