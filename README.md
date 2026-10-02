@@ -8,8 +8,6 @@
 
 Razorpay Recover is an internal tool. When a customer's automatic payment fails, the Razorpay agent, an AI voice agent, phones them, explains what happened, and sends a secure payment link while they are still on the line.
 
-> **Status: work in progress.** The prompts, the call result format, the customer records and the colour tokens are written. The dashboard, the call trigger and the payment link step are the next things to build.
-
 ## The problem
 
 Automatic payments fail all the time, and most of the reasons are ordinary: the card expired, the account was short that day, the bank said no.
@@ -25,20 +23,35 @@ The Razorpay agent makes the call for you.
 1. It phones the customer and checks it is speaking to the right person.
 2. It explains, in a sentence, that the payment did not go through and why.
 3. It asks if they would like to pay now.
-4. If they say yes, a secure Razorpay payment link arrives by message. They pay by UPI or card.
+4. If they say yes, a secure Razorpay payment link arrives by SMS and email, while the call is still going. They pay by UPI or card.
 5. If they need time, want to cancel, or think the charge is wrong, the agent notes it down and a person follows up.
 
-Every call ends with a short record: what happened, whether the customer plans to stay, and if not, why. The team sees it on the dashboard.
+Every call ends with a short record: what happened, whether the customer plans to stay, and if not, why. The team sees it on the dashboard, together with the transcript, the recording and what the call cost.
+
+## What you can do in the dashboard
+
+| Page | What it is for |
+|---|---|
+| **Overview** | Recovery numbers, outcomes, recent activity, and call usage: spend, tokens and prompt caching |
+| **Customers** | The 10 customers with failed autopay. Start a phone call, or talk to the agent in your browser |
+| **Test customers** | Add your own customer with a name, phone, email and a failure case, then call them. Saved to the database |
+| **Calls** | An inbox of every call. Open one to see the summary, cost, tokens, the transcript synced to the audio, and a download for the recording and the transcript |
+| **Payment links** | Every link the agent sent, and whether it was paid |
+| **Settings** | Call limits, what the agent says when the customer goes quiet, SMS and email for the link, recording, and hiding sensitive details in transcripts |
+
+There are two ways to test:
+- **Call now** rings the number saved on the customer. It needs a phone number set up in Vapi, see [docs/TWILIO.md](docs/TWILIO.md).
+- **Talk in browser** opens a side panel and uses your microphone. It needs no phone number, and it shows an animation of who is speaking.
 
 ## How it fits together
 
 ```mermaid
 flowchart TD
-    A[An autopay payment fails] --> B[A team member opens the dashboard and clicks Call now]
+    A[An autopay payment fails] --> B[A team member opens the dashboard and starts a call]
     B --> C[The app asks Vapi to place the call]
-    C --> D[The Razorpay agent talks to the customer by phone]
+    C --> D[The Razorpay agent talks to the customer]
     D --> E{What does the customer say?}
-    E -->|Pay now| F[A Razorpay payment link is sent]
+    E -->|Pay now| F[A Razorpay payment link is sent by SMS and email]
     E -->|Need more time| G[A pay by date is saved]
     E -->|Cancel or dispute| H[The reason is saved for a person to follow up]
     E -->|Stop calling| I[The call ends and they are never called again]
@@ -52,20 +65,40 @@ The parts and their jobs:
 
 ```mermaid
 flowchart LR
-    A[Dashboard] --> B[Our app]
-    B --> C[Vapi]
-    C --> D[Customer's phone]
-    B --> E[Razorpay]
-    B --> F[Database]
+    App["Razorpay Recover<br/>(the dashboard and app)"]
+
+    subgraph Voice["Voice agent layer"]
+        Twilio["Twilio<br/>phone number provider"]
+        Vapi["Vapi<br/>guardrails<br/>prompt caching<br/>orchestration"]
+        Twilio --- Vapi
+    end
+
+    Browser["Browser call<br/>no phone needed, used for the demo"]
+    Phone["Phone call via Twilio<br/>the agent calls<br/>your number<br/>through Twilio"]
+    Razorpay["Razorpay<br/>test mode"]
+    SMS["SMS"]
+    Mail["Mail"]
+
+    App --> Voice
+    Voice --> Browser
+    Voice --> Phone
+    Browser --> Razorpay
+    Phone --> Razorpay
+    Razorpay --> SMS
+    Razorpay --> Mail
 ```
 
 | Part | Job |
 |---|---|
-| Dashboard | Where the team sees customers, starts calls and reads results |
-| Our app | Holds the rules, creates payment links and saves results |
-| Vapi | Places the call and handles the talking and listening |
-| Razorpay | Creates the secure payment link |
-| Database | Keeps the call results |
+| Razorpay Recover | The dashboard and app. It starts calls, holds the rules, creates payment links and saves results |
+| Twilio | The phone number provider. Browser calls do not use it |
+| Vapi | Runs the conversation, with the guardrails, the prompt caching and the orchestration |
+| Browser call | Talk to the agent through your microphone, with no phone. The easy way to demo |
+| Phone call | The agent rings a real number through the Twilio provider |
+| Razorpay, test mode | Creates the secure payment link. No real money moves |
+| SMS and Mail | How the link reaches the customer |
+
+The database keeps customers, call results and settings. The full picture, with the order of events inside a call, is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## How a call works, turn by turn
 
@@ -73,17 +106,18 @@ A turn is one thing the agent says, followed by one thing the customer says. The
 
 | Turn | Agent | Customer | What the app does |
 |---|---|---|---|
-| 1 | "Hello, am I speaking with Aarav?" | "Yes." | Nothing yet |
-| 2 | "Your autopay for Streaming Plus did not go through. Would you like to pay now?" | "Yes, send it." | Nothing yet |
-| 3 | "Done. A secure link is on its way to you now." | "Thanks." | Creates a Razorpay payment link and sends it |
+| 1 | "Hello, am I speaking with Fleming John?" | "Yes." | Nothing yet |
+| 2 | "Your autopay for Super Plan did not go through. Would you like to pay now?" | "Yes, send it." | Nothing yet |
+| 3 | "Done. A secure link is on its way to you now." | "Thanks." | Creates a Razorpay payment link and sends it, then saves the outcome |
 | 4 | "Thank you. Goodbye." | | Saves the result and ends the call |
 
 Other turns are handled the same way:
 
-- **"I need a few days."** The agent asks for a date within the next seven days and saves it.
+- **"I need a few days."** The agent asks for a date within the next seven days and saves it. No link is sent.
 - **"I want to cancel."** The agent asks once for the reason, thanks them, and does not argue.
 - **"That charge is wrong."** The agent says a person will follow up and saves it as a dispute.
 - **"Stop calling me."** The agent apologises, ends the call, and the customer is never called again.
+- **Silence.** After a few seconds the agent asks "Are you still there?". If nobody speaks for 30 seconds, the call ends.
 
 The rules for each turn:
 
@@ -91,7 +125,7 @@ The rules for each turn:
 - One question at a time, then the agent waits.
 - Amounts are said in words.
 - If the customer interrupts, the agent stops and listens.
-- A call ends after three minutes at most.
+- A call ends after three minutes at most. All of these limits can be changed in Settings.
 
 ## Guardrails
 
@@ -110,8 +144,10 @@ These are written in [`src/prompts/guardrails.md`](src/prompts/guardrails.md) an
 
 **2. Limits on the call itself**
 
-- A maximum call length of 180 seconds.
-- If the call reaches voicemail, no payment details are left.
+- A longest call length, 180 seconds by default.
+- An idle check and a hang-up after silence.
+- Card details in the transcript are replaced with labels before the agent hears them. This is on by default and can be changed in Settings.
+- The agent is told never to leave payment details on a voicemail.
 
 **3. Rules our own code enforces**
 
@@ -120,9 +156,7 @@ The AI writes the words, but it does not control the money. These checks run in 
 - The amount always comes from the customer record, never from what the AI says.
 - A payment link is sent only after the customer has agreed to pay.
 - Customers who have already paid or asked to stop are skipped.
-- Calls go only to the phone number saved on the customer record, which is the owner's own.
-
-All customers in this project are fictional, and every call goes to a number the owner controls.
+- Calls go only to the phone number saved on the customer record. The test form asks you to confirm you have permission to call that number.
 
 ## What gets saved after each call
 
@@ -139,17 +173,50 @@ After the call, the app saves a short record. The format is in [`src/schemas/cal
 | needsHumanFollowup | Whether a person should call back |
 | sentiment | Positive, neutral or annoyed |
 
+The Calls page also shows the transcript with the time of each line, the recording, the call length, the cost, and the tokens used. Cost, tokens and the recording come from Vapi when you open a call.
+
+## Cost and tokens
+
+Vapi reports what each call cost and how many AI tokens it used. The dashboard shows both on every call and as totals on the Overview page. Costs are in US dollars.
+
+From the first real calls:
+
+| Call | Length | Cost |
+|---|---|---|
+| Phone call | 52 seconds | $0.07 |
+| Browser call | 104 seconds | $0.14 |
+
+A connected call costs about $0.08 a minute. Most of that is the Vapi platform fee, then the voice, then speech recognition. The AI model is under 2%.
+
+Prompt caching is automatic. The AI model reuses the repeated start of the prompt, and Vapi reports how many tokens were reused. The Overview page shows that as a percentage. There is nothing to set up.
+
+Twilio charges separately for the phone call, see [docs/TWILIO.md](docs/TWILIO.md).
+
+## Privacy and data
+
+The app handles names, phone numbers, emails, amounts, call audio and transcripts. They pass through Vapi, the AI model, speech recognition and voice providers, Razorpay, Twilio and Supabase.
+
+What is in place:
+- The agent never asks for card details, OTPs or PINs.
+- Card details in transcripts are redacted by default. Personal details can be redacted too, in Settings.
+- Recording can be turned off in Settings.
+- Keys live in `.env`, which git ignores.
+
+Redaction applies to transcripts. Audio recordings are not changed.
+
 ## Tech stack
 
 | What | Used for |
 |---|---|
 | Next.js and TypeScript | The dashboard and the app behind it |
 | Vercel | Hosting |
-| Vapi | Placing the call and running the conversation |
+| Vapi | Placing the call and running the conversation, including the browser call |
+| OpenAI `gpt-4o-mini` | The agent's reasoning, through Vapi |
+| Deepgram | Speech to text, through Vapi |
 | ElevenLabs | The agent's voice, through Vapi |
 | A phone number from Twilio, Vonage or Telnyx | The number the agent calls from, imported into Vapi |
 | Razorpay Payment Links, test mode | Secure payment links with no real money moving |
-| Supabase (Postgres) | Saving customers and call results |
+| Supabase (Postgres) | Saving customers, call results and settings |
 
 There is no workflow framework such as LangGraph. Vapi runs the conversation and the script is short and fixed, so a clear prompt and two tools cover it.
 
@@ -158,18 +225,20 @@ There is no workflow framework such as LangGraph. Vapi runs the conversation and
 ```
 razorpay-recover
 ├── src
+│   ├── app          the pages and the routes the dashboard calls
+│   ├── calls        starting and ending calls, and reading what Vapi sends back
+│   ├── components   the pieces of each screen
+│   ├── customers    reading, adding and checking customers
+│   ├── hooks        screen logic
+│   ├── lib          small helpers
+│   ├── payments     Razorpay payment links
 │   ├── prompts      what the agent is told, one file per section
 │   ├── schemas      the shape of the saved call result
-│   ├── customers    the fictional customer records
-│   ├── types        one type per file
-│   ├── lib          small helpers that build the prompt
-│   ├── styles       colour tokens
-│   ├── app          the pages
-│   ├── calls        starting calls (to build)
-│   ├── payments     payment links (to build)
-│   ├── components   screen pieces (to build)
-│   └── hooks        screen logic (to build)
-├── PLAN.md          the plan and open questions
+│   ├── settings     the saved settings and their checks
+│   ├── styles       colour tokens and styles
+│   └── types        one type per file
+├── supabase         the SQL that creates the tables
+├── docs             architecture, setup guides and the plan
 ├── PROMPTS.md       how the prompt is built and changed
 └── LICENSE
 ```
@@ -188,82 +257,49 @@ The prompt files in `src/prompts`:
 | toolSendPaymentLink.md | When to send a payment link |
 | toolLogOutcome.md | When to record how the call ended |
 
-## Run it on your own computer
+## Getting started
 
-### What you need
+Setup takes a few short steps: install, create the database tables, fill in `.env`, start the app, give Vapi a public address, and try a call. The full guide, with every setting and the common problems, is in [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md).
 
-- Node.js 20 or newer
-- A Vapi account and its private API key
-- A phone number imported into Vapi for outbound calls (Twilio, Vonage or Telnyx). Vapi's free numbers cannot place calls. See [docs/TWILIO.md](docs/TWILIO.md) for the full Twilio setup.
-- A Razorpay account with test keys (Dashboard, Settings, API Keys, Generate Test Key)
-- Your own mobile number, saved on the customer records. Use only a number you control or have explicit permission to call.
+The short version:
 
-### Steps
+```
+git clone <your repository address>
+cd razorpay-recover
+npm install
+copy .env.example .env
+npm run dev
+```
 
-1. **Get the code**
-   ```
-   git clone <your repository address>
-   cd razorpay-recover
-   ```
+On Mac or Linux, use `cp` instead of `copy`. Then open http://localhost:3000.
 
-2. **Install the packages**
-   ```
-   npm install
-   ```
+Before the first call you need:
 
-3. **Create the database tables**
+- The two SQL files in `supabase/migrations` run in your Supabase project.
+- The keys filled in `.env`.
+- A public address for Vapi to send messages to, either the deployed site or a tunnel.
+- For phone calls, a phone number imported into Vapi, see [docs/TWILIO.md](docs/TWILIO.md). Browser calls need none.
 
-   In the Supabase dashboard open the SQL editor and run the file `supabase/migrations/20261002000000_create_tables.sql`. It creates the `customers` and `calls` tables and adds the two fictional customers.
+## Deploying to Vercel
 
-4. **Create your settings file**
+The project includes `vercel.json`. With the Vercel command line tool:
 
-   On Windows:
-   ```
-   copy .env.example .env
-   ```
-   On Mac or Linux:
-   ```
-   cp .env.example .env
-   ```
+```
+vercel link
+vercel deploy --prod
+```
 
-5. **Fill in `.env`**
+Add the same settings as in `.env` to the Vercel project first, and set `PUBLIC_BASE_URL` to the site's address.
 
-   | Setting | Where to find it |
-   |---|---|
-   | VAPI_API_KEY | Vapi dashboard, API keys, the private key |
-   | VAPI_PHONE_NUMBER_ID | Vapi dashboard, Phone Numbers, the ID of the number you imported |
-   | RAZORPAY_KEY_ID | Razorpay test key ID, starts with `rzp_test_` |
-   | RAZORPAY_KEY_SECRET | Razorpay test key secret |
-   | VAPI_WEBHOOK_SECRET | Any long random text you choose. Our app checks it on every message from Vapi. |
-   | SUPABASE_URL | Supabase project settings, API, the project URL |
-   | SUPABASE_SECRET_KEY | Supabase project settings, API keys, the secret key (starts with `sb_secret_`). Server only, never share it. |
-   | PUBLIC_BASE_URL | The public address Vapi can reach (see step 7) |
+## Known limits
 
-   Never commit `.env`. It is already in `.gitignore`.
+- **No login.** Anyone with the address can use the dashboard. Do not leave it open with real data.
+- **Twilio trial.** A trial account can only call numbers verified in Twilio, and the person may hear a trial message first. See [docs/TWILIO.md](docs/TWILIO.md).
+- **Paid status is not instant.** A payment is noticed when the Payment links page is opened. A live Razorpay notification is not built yet.
+- **No automated tests.**
+- **Phone layout** has not been checked on a real phone.
 
-6. **Start the app**
-   ```
-   npm run dev
-   ```
-   Open http://localhost:3000.
-
-7. **Let Vapi reach your computer (needed for live calls)**
-
-   Vapi sends messages back to your app during a call, so it needs a public address. Start a tunnel tool such as ngrok in a second terminal:
-   ```
-   ngrok http 3000
-   ```
-   Copy the address it prints into `PUBLIC_BASE_URL` and restart the app.
-
-8. **Try a call**
-
-   Click Call now for a customer. Your phone rings. Answer it and play the customer. Say you will pay, and a Razorpay test payment link is created. Then try the other paths: ask for more time, say you want to cancel, or ask it to stop calling.
-
-### What works today
-
-The dashboard (Overview, Customers, Calls, Payment links), the call trigger, the webhook that handles both tools, Razorpay payment links and result saving are built. The code type-checks and builds. I have not yet placed a live call, because that needs your Vapi number and keys, so treat the first call as the real test.
-
-### Changing the agent
+## Changing the agent
 
 Edit the files in `src/prompts`. Follow [PROMPTS.md](PROMPTS.md) so each change stays short and safe.
 
