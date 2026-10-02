@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { attachUsage } from "@/calls/attachUsage";
 import { listCalls } from "@/calls/listCalls";
 import { startCall } from "@/calls/startCall";
 import { syncOpenCalls } from "@/calls/syncOpenCalls";
@@ -10,7 +11,7 @@ export async function GET() {
   try {
     const calls = await listCalls();
     const hasChanged = await syncOpenCalls(calls);
-    return NextResponse.json(hasChanged ? await listCalls() : calls);
+    return NextResponse.json(await attachUsage(hasChanged ? await listCalls() : calls));
   } catch (error) {
     return makeErrorResponse(error);
   }
