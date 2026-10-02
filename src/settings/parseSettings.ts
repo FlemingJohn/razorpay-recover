@@ -1,6 +1,7 @@
 import { readRequiredText } from "@/customers/readRequiredText";
 import type { AppSettings } from "@/types/AppSettings";
 import { readNumberInRange } from "./readNumberInRange";
+import { readRedactionLevel } from "./readRedactionLevel";
 
 export function parseSettings(input: Record<string, unknown>): AppSettings {
   return {
@@ -12,5 +13,6 @@ export function parseSettings(input: Record<string, unknown>): AppSettings {
     sendSms: input.sendSms === true,
     sendEmail: input.sendEmail === true,
     recordCalls: input.recordCalls === true,
+    redaction: readRedactionLevel(input.redaction),
   };
 }
