@@ -1,17 +1,21 @@
 import { RequestError } from "@/lib/RequestError";
+import type { AppSettings } from "@/types/AppSettings";
 import type { Customer } from "@/types/Customer";
 import type { PaymentLink } from "@/types/PaymentLink";
 import { buildPaymentLinkRequest } from "./buildPaymentLinkRequest";
 import { toBasicAuthHeader } from "./toBasicAuthHeader";
 
-export async function createPaymentLink(customer: Customer): Promise<PaymentLink> {
+export async function createPaymentLink(
+  customer: Customer,
+  settings: AppSettings,
+): Promise<PaymentLink> {
   const response = await fetch("https://api.razorpay.com/v1/payment_links", {
     method: "POST",
     headers: {
       Authorization: toBasicAuthHeader(),
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(buildPaymentLinkRequest(customer)),
+    body: JSON.stringify(buildPaymentLinkRequest(customer, settings)),
   });
   if (!response.ok) {
     throw new RequestError("Razorpay could not create the payment link", 502);
