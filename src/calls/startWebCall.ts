@@ -2,6 +2,7 @@ import { canCallCustomer } from "@/customers/canCallCustomer";
 import { findCustomerById } from "@/customers/findCustomerById";
 import { updateCustomerStatus } from "@/customers/updateCustomerStatus";
 import { RequestError } from "@/lib/RequestError";
+import { getSettings } from "@/settings/getSettings";
 import type { StartedWebCall } from "@/types/StartedWebCall";
 import { buildAssistant } from "./buildAssistant";
 import { createVapiAssistant } from "./createVapiAssistant";
@@ -15,7 +16,7 @@ export async function startWebCall(customerId: string): Promise<StartedWebCall> 
   if (!canCallCustomer(customer)) {
     throw new RequestError(`Cannot talk to a customer who is ${customer.status}`, 409);
   }
-  const assistantId = await createVapiAssistant(buildAssistant(customer));
+  const assistantId = await createVapiAssistant(buildAssistant(customer, await getSettings()));
   const call = await insertCall(customer.id, null);
   await updateCustomerStatus(customer.id, "calling");
   return { callId: call.id, assistantId };
