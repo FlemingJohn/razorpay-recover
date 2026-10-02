@@ -1,5 +1,4 @@
-import { findCustomerById } from "@/customers/findCustomerById";
-import { updateCustomerStatus } from "@/customers/updateCustomerStatus";
+import { releaseCustomerIfCalling } from "@/customers/releaseCustomerIfCalling";
 import type { WebhookMessage } from "@/types/WebhookMessage";
 import { findLatestCall } from "./findLatestCall";
 import { noAnswerSummary } from "./noAnswerSummary";
@@ -19,13 +18,6 @@ export async function handleEndOfCall(
     endedReason: message.endedReason ?? null,
     summary: call.summary ?? noAnswerSummary,
   });
-  await releaseCustomerIfStillCalling(customerId);
+  await releaseCustomerIfCalling(customerId);
   return {};
-}
-
-async function releaseCustomerIfStillCalling(customerId: string): Promise<void> {
-  const customer = await findCustomerById(customerId);
-  if (customer?.status === "calling") {
-    await updateCustomerStatus(customerId, "pending");
-  }
 }
