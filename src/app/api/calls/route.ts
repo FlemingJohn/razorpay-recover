@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
 import { listCalls } from "@/calls/listCalls";
 import { startCall } from "@/calls/startCall";
+import { syncOpenCalls } from "@/calls/syncOpenCalls";
 import { makeErrorResponse } from "@/lib/makeErrorResponse";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    return NextResponse.json(await listCalls());
+    const calls = await listCalls();
+    const hasChanged = await syncOpenCalls(calls);
+    return NextResponse.json(hasChanged ? await listCalls() : calls);
   } catch (error) {
     return makeErrorResponse(error);
   }
