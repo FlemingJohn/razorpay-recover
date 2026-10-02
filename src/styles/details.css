@@ -1,0 +1,32 @@
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  padding: 14px;
+  background: var(--colour-surface-raised);
+  border-radius: var(--radius-control);
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  color: var(--colour-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.summary-value {
+  display: block;
+}
+
+.summary-value::first-letter {
+  text-transform: uppercase;
+}
+
+.audio-player {
+  width: 100%;
+}
