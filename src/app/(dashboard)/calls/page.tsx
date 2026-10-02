@@ -28,7 +28,7 @@ export default function CallsPage() {
           onSelect={setSelectedCallId}
         />
       </PageCard>
-      <LiveCallCard call={selectedCall} />
+      <LiveCallCard call={selectedCall} onChanged={calls.reload} />
     </>
   );
 }
