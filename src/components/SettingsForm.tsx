@@ -3,7 +3,9 @@
 import { useSettingsForm } from "@/hooks/useSettingsForm";
 import type { AppSettings } from "@/types/AppSettings";
 import { NumberField } from "./NumberField";
+import { redactionLevels } from "@/settings/redactionLevels";
 import { PageCard } from "./PageCard";
+import { SelectField } from "./SelectField";
 import { TextField } from "./TextField";
 import { ToggleField } from "./ToggleField";
 
@@ -33,6 +35,14 @@ export function SettingsForm({ initial }: { initial: AppSettings }) {
       </PageCard>
       <PageCard title="Privacy">
         <ToggleField id="recordCalls" label="Record call audio" hint="Turn off to stop saving recordings of new calls. Transcripts are still saved." checked={values.recordCalls} onChange={(checked) => setField("recordCalls", checked)} />
+        <SelectField
+          id="redaction"
+          label="Hide sensitive details in transcripts"
+          value={values.redaction}
+          options={redactionLevels.map((level) => ({ value: level.value, label: level.label }))}
+          onChange={(value) => setField("redaction", value as AppSettings["redaction"])}
+        />
+        <p className="field-hint">Replaces card numbers, or names and places, with labels before the agent hears them. Audio recordings are not changed. Turning on personal details may hide the customer name from the agent.</p>
       </PageCard>
       <div className="settings-actions">
         <button type="submit" className="button" disabled={form.isSaving}>
