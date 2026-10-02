@@ -5,6 +5,7 @@ export function CustomersTable(props: {
   customers: Customer[];
   busyCustomerId: string | null;
   onCall: (customerId: string) => void;
+  onTalk: (customerId: string) => void;
 }) {
   return (
     <div className="table-wrap">
@@ -29,6 +30,7 @@ export function CustomersTable(props: {
               customer={customer}
               isBusy={props.busyCustomerId === customer.id}
               onCall={props.onCall}
+              onTalk={props.onTalk}
             />
           ))}
         </tbody>
