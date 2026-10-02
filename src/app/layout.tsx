@@ -13,6 +13,8 @@ import "@/styles/calls.css";
 import "@/styles/tabs.css";
 import "@/styles/conversation.css";
 import "@/styles/drawer.css";
+import "@/styles/voice.css";
+import "@/styles/settings.css";
 
 export const metadata = { title: "Razorpay Recover" };
 
