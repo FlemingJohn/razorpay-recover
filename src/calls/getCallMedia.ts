@@ -3,6 +3,7 @@ import type { CallMedia } from "@/types/CallMedia";
 import { findCallById } from "./findCallById";
 import { getDurationSeconds } from "./getDurationSeconds";
 import { getVapiCall } from "./getVapiCall";
+import { readCostDetails } from "./readCostDetails";
 import { readTimedLines } from "./readTimedLines";
 
 const emptyMedia: CallMedia = {
@@ -11,6 +12,7 @@ const emptyMedia: CallMedia = {
   startedAt: null,
   channel: "phone",
   lines: [],
+  cost: null,
 };
 
 export async function getCallMedia(callId: string): Promise<CallMedia> {
@@ -29,5 +31,6 @@ export async function getCallMedia(callId: string): Promise<CallMedia> {
     startedAt: vapiCall.startedAt,
     channel: vapiCall.type === "webCall" ? "browser" : "phone",
     lines: readTimedLines(vapiCall),
+    cost: readCostDetails(vapiCall),
   };
 }
