@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { CallsTable } from "@/components/CallsTable";
-import { LiveCallCard } from "@/components/LiveCallCard";
-import { PageCard } from "@/components/PageCard";
+import { CallDetailPanel } from "@/components/CallDetailPanel";
+import { CallList } from "@/components/CallList";
+import { EmptyCallState } from "@/components/EmptyCallState";
 import { StateMessage } from "@/components/StateMessage";
 import { useCalls } from "@/hooks/useCalls";
 import { useCustomers } from "@/hooks/useCustomers";
@@ -17,18 +17,24 @@ export default function CallsPage() {
   if (status !== "ready") {
     return <StateMessage status={status} />;
   }
-  const selectedCall = calls.data!.find((call) => call.id === selectedCallId) ?? null;
+  if (calls.data!.length === 0) {
+    return <EmptyCallState />;
+  }
+  const selectedCall = calls.data!.find((call) => call.id === selectedCallId) ?? calls.data![0];
   return (
-    <>
-      <PageCard title="Calls">
-        <CallsTable
-          calls={calls.data!}
-          customers={customers.data!}
-          selectedCallId={selectedCallId}
-          onSelect={setSelectedCallId}
-        />
-      </PageCard>
-      <LiveCallCard call={selectedCall} onChanged={calls.reload} />
-    </>
+    <div className="calls-layout">
+      <CallList
+        calls={calls.data!}
+        customers={customers.data!}
+        selectedCallId={selectedCall.id}
+        onSelect={setSelectedCallId}
+      />
+      <CallDetailPanel
+        key={selectedCall.id}
+        call={selectedCall}
+        customer={customers.data!.find((customer) => customer.id === selectedCall.customerId)}
+        onChanged={calls.reload}
+      />
+    </div>
   );
 }
