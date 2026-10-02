@@ -1,4 +1,5 @@
 import { formatDateTime } from "@/lib/formatDateTime";
+import { formatCallUsage } from "@/lib/formatCallUsage";
 import { getCallStatusPill } from "@/lib/getCallStatusPill";
 import { getOutcomePill } from "@/lib/getOutcomePill";
 import type { CallRecord } from "@/types/CallRecord";
@@ -27,6 +28,7 @@ export function CallListItem(props: {
           {props.customer ? `${props.customer.merchant}, ${props.customer.plan}` : ""}
         </span>
         <span className="call-item-time">{formatDateTime(call.createdAt)}</span>
+        <span className="call-item-time">{formatCallUsage(call)}</span>
       </span>
       <StatusPill {...pill} />
     </button>
