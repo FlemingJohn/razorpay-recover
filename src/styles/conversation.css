@@ -1,0 +1,106 @@
+.audio-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.audio-bar .audio-player {
+  flex: 1;
+  min-width: 260px;
+}
+
+.download-button {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 14px 8px 8px;
+  color: var(--colour-ink);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--colour-surface);
+  border: 1px solid var(--colour-line);
+  border-radius: var(--radius-control);
+}
+
+.download-button:hover {
+  background: var(--colour-accent-soft);
+  border-color: var(--colour-accent);
+}
+
+.download-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: var(--colour-accent-ink);
+  background: var(--colour-accent-soft);
+  border-radius: 12px;
+}
+
+.download-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.download-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.download-detail {
+  color: var(--colour-muted);
+  font-size: 12px;
+}
+
+.timed-transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 440px;
+  padding: 4px;
+  overflow-y: auto;
+}
+
+.timed-line {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  max-width: 85%;
+  padding: 8px 12px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: var(--radius-control);
+}
+
+.timed-line-agent {
+  align-self: flex-start;
+  color: var(--colour-accent-ink);
+  background: var(--colour-accent-soft);
+}
+
+.timed-line-customer {
+  align-self: flex-end;
+  color: var(--colour-ink);
+  background: var(--colour-surface-raised);
+}
+
+.timed-line-active {
+  border-color: var(--colour-accent);
+}
+
+.timed-line-time {
+  flex: none;
+  color: var(--colour-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.tab-content .download-button {
+  align-self: flex-start;
+}
