@@ -4,6 +4,7 @@ import { ActivityFeed } from "@/components/ActivityFeed";
 import { OutcomeBars } from "@/components/OutcomeBars";
 import { StateMessage } from "@/components/StateMessage";
 import { StatCards } from "@/components/StatCards";
+import { UsageStatCards } from "@/components/UsageStatCards";
 import { useCalls } from "@/hooks/useCalls";
 import { useCustomers } from "@/hooks/useCustomers";
 import { combineRequestStatus } from "@/lib/combineRequestStatus";
@@ -17,9 +18,11 @@ export default function OverviewPage() {
   if (status !== "ready") {
     return <StateMessage status={status} />;
   }
+  const stats = getDashboardStats(customers.data!, calls.data!);
   return (
     <>
-      <StatCards stats={getDashboardStats(customers.data!, calls.data!)} />
+      <StatCards stats={stats} />
+      <UsageStatCards stats={stats} />
       <div className="two-columns">
         <OutcomeBars counts={countOutcomes(calls.data!)} />
         <ActivityFeed calls={calls.data!} customers={customers.data!} />
