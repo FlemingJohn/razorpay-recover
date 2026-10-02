@@ -9,4 +9,5 @@ export const defaultSettings: AppSettings = {
   sendSms: true,
   sendEmail: true,
   recordCalls: true,
+  redaction: "card",
 };
