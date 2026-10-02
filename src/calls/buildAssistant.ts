@@ -1,15 +1,21 @@
 import { buildSystemPrompt } from "@/lib/buildSystemPrompt";
+import type { AppSettings } from "@/types/AppSettings";
 import type { Customer } from "@/types/Customer";
 import { assistantSettings } from "./assistantSettings";
+import { buildIdleHooks } from "./buildIdleHooks";
 import { buildLogOutcomeTool } from "./buildLogOutcomeTool";
 import { buildSendPaymentLinkTool } from "./buildSendPaymentLinkTool";
 import { buildWebhookUrl } from "./buildWebhookUrl";
 
-export function buildAssistant(customer: Customer) {
+export function buildAssistant(customer: Customer, settings: AppSettings) {
   return {
     name: assistantSettings.name,
     firstMessage: `Hello, am I speaking with ${customer.name}?`,
-    maxDurationSeconds: assistantSettings.maxDurationSeconds,
+    maxDurationSeconds: settings.maxDurationSeconds,
+    silenceTimeoutSeconds: settings.silenceTimeoutSeconds,
+    hooks: buildIdleHooks(settings),
+    analysisPlan: assistantSettings.analysisPlan,
+    artifactPlan: { recordingEnabled: settings.recordCalls },
     model: {
       ...assistantSettings.model,
       messages: [{ role: "system", content: buildSystemPrompt(customer) }],
