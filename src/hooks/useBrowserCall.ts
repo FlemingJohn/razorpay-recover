@@ -7,11 +7,14 @@ import { linkWebCall } from "@/lib/linkWebCall";
 import { requestWebCall } from "@/lib/requestWebCall";
 import type { BrowserCallState } from "@/types/BrowserCallState";
 import type { SpokenLine } from "@/types/SpokenLine";
+import type { Speaker } from "@/types/Speaker";
 
 export function useBrowserCall(customerId: string, onChanged: () => void) {
   const [state, setState] = useState<BrowserCallState>("idle");
   const [lines, setLines] = useState<SpokenLine[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [speaker, setSpeaker] = useState<Speaker>("nobody");
+  const [volume, setVolume] = useState(0);
   const vapiReference = useRef<Vapi | null>(null);
 
   function fail(message: string) {
@@ -30,9 +33,13 @@ export function useBrowserCall(customerId: string, onChanged: () => void) {
         onStarted: () => setState("live"),
         onEnded: () => {
           setState("ended");
+          setSpeaker("nobody");
+          setVolume(0);
           onChanged();
         },
         onLine: (line) => setLines((current) => [...current, line]),
+        onSpeaker: setSpeaker,
+        onVolume: setVolume,
         onFailed: fail,
       });
       const call = await vapiReference.current.start(started.assistantId);
@@ -54,5 +61,5 @@ export function useBrowserCall(customerId: string, onChanged: () => void) {
     };
   }, []);
 
-  return { state, lines, errorMessage, start, stop };
+  return { state, lines, errorMessage, speaker, volume, start, stop };
 }
