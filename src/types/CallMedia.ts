@@ -1,3 +1,4 @@
+import type { CostDetails } from "./CostDetails";
 import type { TimedLine } from "./TimedLine";
 
 export interface CallMedia {
@@ -6,4 +7,5 @@ export interface CallMedia {
   startedAt: string | null;
   channel: "phone" | "browser";
   lines: TimedLine[];
+  cost: CostDetails | null;
 }
