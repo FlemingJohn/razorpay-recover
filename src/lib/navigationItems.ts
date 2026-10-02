@@ -6,4 +6,5 @@ export const navigationItems: NavigationItem[] = [
   { href: "/test-customers", label: "Test customers", icon: "flask" },
   { href: "/calls", label: "Calls", icon: "calls" },
   { href: "/links", label: "Payment links", icon: "links" },
+  { href: "/settings", label: "Settings", icon: "settings" },
 ];
