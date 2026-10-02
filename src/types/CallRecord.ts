@@ -1,5 +1,6 @@
 import type { CallStatus } from "./CallStatus";
 import type { CallSummary } from "./CallSummary";
+import type { TokenUsage } from "./TokenUsage";
 
 export interface CallRecord {
   id: string;
@@ -12,4 +13,6 @@ export interface CallRecord {
   transcript: string | null;
   endedReason: string | null;
   createdAt: string;
+  costUsd: number | null;
+  tokenUsage: TokenUsage | null;
 }
