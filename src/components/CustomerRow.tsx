@@ -3,11 +3,13 @@ import { getCustomerStatusPill } from "@/lib/getCustomerStatusPill";
 import type { Customer } from "@/types/Customer";
 import { CallButton } from "./CallButton";
 import { StatusPill } from "./StatusPill";
+import { TalkButton } from "./TalkButton";
 
 export function CustomerRow(props: {
   customer: Customer;
   isBusy: boolean;
   onCall: (customerId: string) => void;
+  onTalk: (customerId: string) => void;
 }) {
   const { customer } = props;
   return (
@@ -22,8 +24,9 @@ export function CustomerRow(props: {
       <td>
         <StatusPill {...getCustomerStatusPill(customer.status)} />
       </td>
-      <td>
+      <td className="actions">
         <CallButton customer={customer} isBusy={props.isBusy} onCall={props.onCall} />
+        <TalkButton customer={customer} onTalk={props.onTalk} />
       </td>
     </tr>
   );
