@@ -45,23 +45,7 @@ There are two ways to test:
 
 ## How it fits together
 
-```mermaid
-flowchart TD
-    A[An autopay payment fails] --> B[A team member opens the dashboard and starts a call]
-    B --> C[The app asks Vapi to place the call]
-    C --> D[The Razorpay agent talks to the customer]
-    D --> E{What does the customer say?}
-    E -->|Pay now| F[A Razorpay payment link is sent by SMS and email]
-    E -->|Need more time| G[A pay by date is saved]
-    E -->|Cancel or dispute| H[The reason is saved for a person to follow up]
-    E -->|Stop calling| I[The call ends and they are never called again]
-    F --> J[The dashboard shows the result]
-    G --> J
-    H --> J
-    I --> J
-```
-
-The parts and their jobs:
+The parts and how they connect:
 
 ```mermaid
 flowchart LR
@@ -129,7 +113,7 @@ The rules for each turn:
 
 ## Guardrails
 
-Guardrails are the rules that keep the agent safe, honest and polite. They work in three layers, so no single failure can cause harm.
+Guardrails are the rules that keep the agent safe, honest and polite. They work in four layers, so no single failure can cause harm.
 
 **1. Rules in the prompt**
 
@@ -146,7 +130,6 @@ These are written in [`src/prompts/guardrails.md`](src/prompts/guardrails.md) an
 
 - A longest call length, 180 seconds by default.
 - An idle check and a hang-up after silence.
-- Card details in the transcript are replaced with labels before the agent hears them. This is on by default and can be changed in Settings.
 - The agent is told never to leave payment details on a voicemail.
 
 **3. Rules our own code enforces**
@@ -157,6 +140,14 @@ The AI writes the words, but it does not control the money. These checks run in 
 - A payment link is sent only after the customer has agreed to pay.
 - Customers who have already paid or asked to stop are skipped.
 - Calls go only to the phone number saved on the customer record. The test form asks you to confirm you have permission to call that number.
+
+**4. Privacy and data**
+
+The app handles names, phone numbers, emails, amounts, call audio and transcripts. They pass through Vapi, the AI model, speech recognition and voice providers, Razorpay, Twilio and Supabase.
+
+- Card details in transcripts are replaced with labels before the agent hears them. This is on by default. Personal details can be added in Settings.
+- Audio recordings are not changed by that, so they can still contain whatever was said aloud. Recording can be turned off in Settings.
+- Keys live in `.env`, which git ignores.
 
 ## What gets saved after each call
 
@@ -188,21 +179,17 @@ From the first real calls:
 
 A connected call costs about $0.08 a minute. Most of that is the Vapi platform fee, then the voice, then speech recognition. The AI model is under 2%.
 
-Prompt caching is automatic. The AI model reuses the repeated start of the prompt, and Vapi reports how many tokens were reused. The Overview page shows that as a percentage. There is nothing to set up.
+Prompt caching is automatic and needs no setup. The AI model reuses the repeated start of the prompt instead of reading it again, and charges less for those tokens. Vapi reports how many tokens were reused, and the Overview page shows that as a percentage.
+
+How long a cached prompt lasts, according to OpenAI's documentation:
+
+- It only applies to prompts of at least 1,024 tokens.
+- On OpenAI's earlier models, such as the gpt-4o-mini we use, a cached prompt typically stays available for around 5 to 10 minutes of inactivity, and for at most one hour. OpenAI's newest models keep it for 30 minutes after it was last used.
+- Caches are not shared between organizations.
+
+What that means here: the cache helps within one call, because every turn repeats the same prompt, and the first turn is never cached. Two calls close together can only share the part of the prompt that is identical, and a call that starts after a long pause starts with an empty cache.
 
 Twilio charges separately for the phone call, see [docs/TWILIO.md](docs/TWILIO.md).
-
-## Privacy and data
-
-The app handles names, phone numbers, emails, amounts, call audio and transcripts. They pass through Vapi, the AI model, speech recognition and voice providers, Razorpay, Twilio and Supabase.
-
-What is in place:
-- The agent never asks for card details, OTPs or PINs.
-- Card details in transcripts are redacted by default. Personal details can be redacted too, in Settings.
-- Recording can be turned off in Settings.
-- Keys live in `.env`, which git ignores.
-
-Redaction applies to transcripts. Audio recordings are not changed.
 
 ## Tech stack
 
@@ -214,7 +201,7 @@ Redaction applies to transcripts. Audio recordings are not changed.
 | OpenAI `gpt-4o-mini` | The agent's reasoning, through Vapi |
 | Deepgram | Speech to text, through Vapi |
 | ElevenLabs | The agent's voice, through Vapi |
-| A phone number from Twilio, Vonage or Telnyx | The number the agent calls from, imported into Vapi |
+| Twilio | The phone number the agent calls from, imported into Vapi. Only needed for phone calls |
 | Razorpay Payment Links, test mode | Secure payment links with no real money moving |
 | Supabase (Postgres) | Saving customers, call results and settings |
 
@@ -238,8 +225,7 @@ razorpay-recover
 │   ├── styles       colour tokens and styles
 │   └── types        one type per file
 ├── supabase         the SQL that creates the tables
-├── docs             architecture, setup guides and the plan
-├── PROMPTS.md       how the prompt is built and changed
+├── docs             architecture, setup guides, the plan and the prompt guide
 └── LICENSE
 ```
 
@@ -301,7 +287,7 @@ Add the same settings as in `.env` to the Vercel project first, and set `PUBLIC_
 
 ## Changing the agent
 
-Edit the files in `src/prompts`. Follow [PROMPTS.md](PROMPTS.md) so each change stays short and safe.
+Edit the files in `src/prompts`. Follow [docs/PROMPTS.md](docs/PROMPTS.md) so each change stays short and safe.
 
 ## License
 
