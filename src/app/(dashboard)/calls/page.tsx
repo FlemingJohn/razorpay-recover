@@ -8,6 +8,9 @@ import { StateMessage } from "@/components/StateMessage";
 import { useCalls } from "@/hooks/useCalls";
 import { useCustomers } from "@/hooks/useCustomers";
 import { combineRequestStatus } from "@/lib/combineRequestStatus";
+import { getTotalTokens } from "@/lib/getTotalTokens";
+import { sumCustomerCost } from "@/lib/sumCustomerCost";
+import { sumTokenUsage } from "@/lib/sumTokenUsage";
 
 export default function CallsPage() {
   const customers = useCustomers();
@@ -33,6 +36,10 @@ export default function CallsPage() {
         key={selectedCall.id}
         call={selectedCall}
         customer={customers.data!.find((customer) => customer.id === selectedCall.customerId)}
+        customerCostUsd={sumCustomerCost(calls.data!, selectedCall.customerId)}
+        customerTokens={getTotalTokens(
+          sumTokenUsage(calls.data!.filter((call) => call.customerId === selectedCall.customerId)),
+        )}
         onChanged={calls.reload}
       />
     </div>
