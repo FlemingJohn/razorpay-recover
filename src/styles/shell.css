@@ -10,7 +10,7 @@
   flex: none;
   flex-direction: column;
   gap: 6px;
-  width: 236px;
+  width: 252px;
   padding: 16px 12px;
   background: var(--colour-surface);
   border: 1px solid var(--colour-line);
@@ -33,7 +33,7 @@
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding: 4px 4px 16px 8px;
 }
 
@@ -50,6 +50,7 @@
 
 .brand-name {
   flex: 1;
+  font-size: 15px;
   font-weight: 800;
   white-space: nowrap;
 }
