@@ -1,3 +1,5 @@
+import type { RedactionLevel } from "./RedactionLevel";
+
 export interface AppSettings {
   maxDurationSeconds: number;
   silenceTimeoutSeconds: number;
@@ -7,4 +9,5 @@ export interface AppSettings {
   sendSms: boolean;
   sendEmail: boolean;
   recordCalls: boolean;
+  redaction: RedactionLevel;
 }
