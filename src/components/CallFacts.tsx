@@ -1,10 +1,17 @@
 import { formatDuration } from "@/lib/formatDuration";
 import { formatRupees } from "@/lib/formatRupees";
+import { formatTokens } from "@/lib/formatTokens";
+import { formatUsd } from "@/lib/formatUsd";
 import type { CallMedia } from "@/types/CallMedia";
 import type { Customer } from "@/types/Customer";
 import { SummaryItem } from "./SummaryItem";
 
-export function CallFacts(props: { customer: Customer | undefined; media: CallMedia | null }) {
+export function CallFacts(props: {
+  customer: Customer | undefined;
+  media: CallMedia | null;
+  customerCostUsd: number;
+  customerTokens: number;
+}) {
   const { customer, media } = props;
   const isBrowser = media?.channel === "browser";
   return (
@@ -18,6 +25,12 @@ export function CallFacts(props: { customer: Customer | undefined; media: CallMe
       </SummaryItem>
       <SummaryItem label="Duration" icon="clock">
         {media?.durationSeconds != null ? formatDuration(media.durationSeconds) : "Not connected"}
+      </SummaryItem>
+      <SummaryItem label="All calls with this customer" icon="rupee">
+        {formatUsd(props.customerCostUsd)}
+      </SummaryItem>
+      <SummaryItem label="Tokens across this customer" icon="flag">
+        {formatTokens(props.customerTokens)}
       </SummaryItem>
     </div>
   );
