@@ -14,6 +14,8 @@ export function CallDetailPanel(props: {
   call: CallRecord;
   customer: Customer | undefined;
   onChanged: () => void;
+  customerCostUsd: number;
+  customerTokens: number;
 }) {
   const [tab, setTab] = useState<DetailTab>("overview");
   const media = useCallMedia(props.call.id);
@@ -22,7 +24,13 @@ export function CallDetailPanel(props: {
       <CallDetailHeader call={props.call} customer={props.customer} onChanged={props.onChanged} />
       <DetailTabs selected={tab} onSelect={setTab} />
       {tab === "overview" && (
-        <CallOverviewTab call={props.call} customer={props.customer} media={media.data} />
+        <CallOverviewTab
+          call={props.call}
+          customer={props.customer}
+          media={media.data}
+          customerCostUsd={props.customerCostUsd}
+          customerTokens={props.customerTokens}
+        />
       )}
       {tab === "conversation" && (
         <ConversationTab call={props.call} customer={props.customer} media={media.data} />
