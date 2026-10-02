@@ -5,7 +5,7 @@ import { callFromRow } from "./callFromRow";
 
 export async function insertCall(
   customerId: string,
-  vapiCallId: string,
+  vapiCallId: string | null,
 ): Promise<CallRecord> {
   const { data, error } = await getDatabaseClient()
     .from("calls")
