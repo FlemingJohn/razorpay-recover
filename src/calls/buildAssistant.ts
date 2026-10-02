@@ -5,6 +5,7 @@ import { assistantSettings } from "./assistantSettings";
 import { buildIdleHooks } from "./buildIdleHooks";
 import { buildLogOutcomeTool } from "./buildLogOutcomeTool";
 import { buildSendPaymentLinkTool } from "./buildSendPaymentLinkTool";
+import { buildTranscriber } from "./buildTranscriber";
 import { buildWebhookUrl } from "./buildWebhookUrl";
 
 export function buildAssistant(customer: Customer, settings: AppSettings) {
@@ -25,7 +26,7 @@ export function buildAssistant(customer: Customer, settings: AppSettings) {
       ],
     },
     voice: assistantSettings.voice,
-    transcriber: assistantSettings.transcriber,
+    transcriber: buildTranscriber(settings),
     server: { url: buildWebhookUrl(customer.id) },
     serverMessages: assistantSettings.serverMessages,
   };
