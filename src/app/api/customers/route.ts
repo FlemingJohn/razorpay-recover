@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { listCalls } from "@/calls/listCalls";
+import { syncOpenCalls } from "@/calls/syncOpenCalls";
 import { insertCustomer } from "@/customers/insertCustomer";
 import { listCustomers } from "@/customers/listCustomers";
 import { parseNewCustomer } from "@/customers/parseNewCustomer";
@@ -9,6 +11,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    await syncOpenCalls(await listCalls());
     return NextResponse.json(await listCustomers());
   } catch (error) {
     return makeErrorResponse(error);
