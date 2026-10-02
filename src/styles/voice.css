@@ -1,0 +1,98 @@
+.live-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.voice {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 0 4px;
+}
+
+.voice-orb {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  width: 128px;
+  height: 128px;
+  color: var(--colour-accent);
+  background: var(--colour-accent-soft);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 var(--colour-accent-soft);
+  transform: scale(calc(1 + var(--level, 0) * 0.25));
+  transition: transform 0.12s ease-out;
+}
+
+.voice-bar {
+  width: 8px;
+  height: 32px;
+  background: currentColor;
+  border-radius: var(--radius-pill);
+  transform: scaleY(0.4);
+}
+
+.voice-label {
+  font-weight: 700;
+}
+
+.voice-customer .voice-orb {
+  color: var(--colour-good);
+  background: var(--colour-good-soft);
+}
+
+.voice-connecting .voice-orb {
+  color: var(--colour-warning);
+  background: var(--colour-warning-soft);
+  animation: voice-breathe 1.2s ease-in-out infinite;
+}
+
+.voice-live.voice-nobody .voice-orb {
+  animation: voice-breathe 2.4s ease-in-out infinite;
+}
+
+.voice-agent .voice-bar,
+.voice-customer .voice-bar {
+  animation: voice-bounce 0.9s ease-in-out infinite;
+}
+
+.voice-bar:nth-child(2) { animation-delay: 0.12s; }
+.voice-bar:nth-child(3) { animation-delay: 0.24s; }
+.voice-bar:nth-child(4) { animation-delay: 0.12s; }
+.voice-bar:nth-child(5) { animation-delay: 0.36s; }
+
+.live-caption {
+  min-height: 48px;
+  max-width: 100%;
+  padding: 10px 14px;
+  margin: 0;
+  text-align: center;
+  background: var(--colour-surface-raised);
+  border-radius: var(--radius-control);
+}
+
+.live-caption-empty {
+  color: var(--colour-muted);
+}
+
+@keyframes voice-bounce {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1.6); }
+}
+
+@keyframes voice-breathe {
+  0%, 100% { box-shadow: 0 0 0 0 var(--colour-accent-soft); }
+  50% { box-shadow: 0 0 0 16px transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-orb,
+  .voice-bar {
+    transition: none;
+    animation: none !important;
+  }
+}
