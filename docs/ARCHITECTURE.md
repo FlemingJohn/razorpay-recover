@@ -51,27 +51,15 @@ Both paths use the same agent, the same prompt and the same guardrails. Only the
 
 ## What happens inside a call
 
-The diagram above shows the main parts. This shows the order of events once the agent is talking.
+Once the agent is talking, the order of events is:
 
-```mermaid
-sequenceDiagram
-    participant C as Customer
-    participant V as Vapi and the agent
-    participant A as Razorpay Recover
-    participant R as Razorpay
-    participant D as Database
-
-    V->>C: Greets and explains the failed payment
-    C->>V: Agrees to pay
-    V->>A: Asks the app to send the payment link
-    A->>D: Reads the amount from the customer record
-    A->>R: Creates the payment link
-    R-->>C: Sends the link by SMS and mail
-    V->>A: Reports the outcome
-    A->>D: Saves the outcome
-    V->>A: Sends the transcript and the end of the call
-    A->>D: Saves the call
-```
+1. The agent greets the customer and explains the failed payment.
+2. The customer agrees to pay.
+3. The agent asks the app to send the payment link.
+4. The app reads the amount from the customer record in the database.
+5. The app asks Razorpay to create the link, and Razorpay sends it by SMS and mail.
+6. The agent reports the outcome, and the app saves it.
+7. When the call ends, Vapi sends the transcript, and the app saves the call.
 
 Two things to notice:
 
