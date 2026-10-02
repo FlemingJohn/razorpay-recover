@@ -12,4 +12,5 @@ export type IconName =
   | "alert"
   | "rupee"
   | "percent"
-  | "wave";
+  | "wave"
+  | "flask";
