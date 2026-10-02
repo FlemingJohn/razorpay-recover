@@ -14,5 +14,7 @@ export function callFromRow(row: Record<string, unknown>): CallRecord {
     transcript: row.transcript as string | null,
     endedReason: row.ended_reason as string | null,
     createdAt: row.created_at as string,
+    costUsd: null,
+    tokenUsage: null,
   };
 }
